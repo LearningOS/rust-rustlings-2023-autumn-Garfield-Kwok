@@ -31,7 +31,6 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
@@ -52,6 +51,31 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        if s.len() == 0{
+            return Err(ParsePersonError::Empty)
+        }
+        else{
+            let ss:Vec<&str> = s.split(',').collect();
+            if ss.len()!=2 {
+                return Err(ParsePersonError::BadLen);
+            } else {
+                let name = ss[0].to_string();
+                let age = ss[1].parse::<usize>().map_err(ParsePersonError::ParseInt)?;
+        
+// 这句话是一种常见的 Rust 语法，用于将字符串转换为整数并处理可能的错误。让我解释一下它的各个部分：
+
+// ss[1] - 这是您从字符串分割后的部分中提取的第二部分，即年龄部分。
+// .parse::<usize>() - 这是将字符串解析为 usize 类型的方法。parse 方法用于将字符串转换为其他类型的值，其中尖括号 ::<usize> 指定要将其解析为 usize 类型。
+// .map_err(ParsePersonError::ParseInt) - 这部分是将可能的错误映射为 ParsePersonError::ParseInt 变体的过程。如果解析失败，将 ParsePersonError::ParseInt 用于表示错误。
+// ? - 这是一个错误处理的快捷方式。如果解析成功，则返回解析后的值，如果解析失败，它会提前返回包含错误的 Result，允许您立即返回错误。这避免了嵌套的 match 语句或 if let 语句来处理错误。
+// 所以，这句话的意思是，它尝试将字符串解析为 usize，如果解析成功，返回解析后的年龄值，如果解析失败，立即返回包含 ParsePersonError::ParseInt 错误的 Result。
+                if name.is_empty() {
+                    return Err(ParsePersonError::NoName);
+                }
+                
+                Ok(Person { name, age })
+            }
+        }
     }
 }
 
